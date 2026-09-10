@@ -1,0 +1,110 @@
+{
+  "slides": 20,
+  "canvas_css_px": [
+    1280,
+    720
+  ],
+  "font": "Noto Sans JP",
+  "minimum_font_css_px": 14,
+  "shape_bounds": "pass",
+  "speaker_notes": "20 / 20",
+  "contrast_checks": [
+    {
+      "fg": "00118F",
+      "bg": "E8F1FE",
+      "role": "text",
+      "ratio": 12.49
+    },
+    {
+      "fg": "0017C1",
+      "bg": "E8F1FE",
+      "role": "text",
+      "ratio": 9.75
+    },
+    {
+      "fg": "0017C1",
+      "bg": "F2F2F2",
+      "role": "text",
+      "ratio": 9.91
+    },
+    {
+      "fg": "0017C1",
+      "bg": "FFFFFF",
+      "role": "boundary",
+      "ratio": 11.1
+    },
+    {
+      "fg": "0017C1",
+      "bg": "FFFFFF",
+      "role": "text",
+      "ratio": 11.1
+    },
+    {
+      "fg": "1A1A1A",
+      "bg": "E8F1FE",
+      "role": "text",
+      "ratio": 15.29
+    },
+    {
+      "fg": "1A1A1A",
+      "bg": "F2F2F2",
+      "role": "text",
+      "ratio": 15.55
+    },
+    {
+      "fg": "1A1A1A",
+      "bg": "FFFFFF",
+      "role": "text",
+      "ratio": 17.4
+    },
+    {
+      "fg": "4D4D4D",
+      "bg": "F2F2F2",
+      "role": "text",
+      "ratio": 7.55
+    },
+    {
+      "fg": "4D4D4D",
+      "bg": "FFFFFF",
+      "role": "text",
+      "ratio": 8.45
+    },
+    {
+      "fg": "767676",
+      "bg": "FFFFFF",
+      "role": "text",
+      "ratio": 4.54
+    },
+    {
+      "fg": "949494",
+      "bg": "FFFFFF",
+      "role": "boundary",
+      "ratio": 3.03
+    },
+    {
+      "fg": "FFFFFF",
+      "bg": "00118F",
+      "role": "boundary",
+      "ratio": 14.22
+    },
+    {
+      "fg": "FFFFFF",
+      "bg": "00118F",
+      "role": "text",
+      "ratio": 14.22
+    },
+    {
+      "fg": "FFFFFF",
+      "bg": "0017C1",
+      "role": "text",
+      "ratio": 11.1
+    }
+  ],
+  "render_check": {
+    "slides_rendered": 20,
+    "overflow_warnings": 0,
+    "method": "Pillow approximation"
+  },
+  "limitation": "Preview is an approximation; actual PowerPoint rendering is not verified.",
+  "visual_review": "All 20 slide previews reviewed; slides 5, 11 and 18 refined."
+}

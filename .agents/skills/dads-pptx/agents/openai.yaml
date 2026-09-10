@@ -1,0 +1,4 @@
+interface:
+  display_name: "DADS PPTX"
+  short_description: "デジタル庁デザインシステムに沿ったPowerPoint資料を生成・検証する"
+  default_prompt: "$dads-pptx を使って、デジタル庁デザインシステムに沿ったPowerPoint資料を作成してください。"
