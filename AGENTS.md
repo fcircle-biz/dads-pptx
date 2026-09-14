@@ -9,13 +9,15 @@
 | --- | --- |
 | `scripts/dads_theme.py` | DADSトークン（カラー/タイポ/余白/角丸）とPPTX描画ヘルパ。**単一の正** |
 | `scripts/render_check.py` | 生成PPTXをPillowで近似描画し、はみ出しを検出 |
-| `scripts/build_pptx.py` | 「AI駆動開発」15枚 → `out/AI駆動開発_DADS.pptx` |
-| `scripts/build_ai_development_guide.py` | 「AI駆動開発ガイド」20枚 → `out/AI駆動開発ガイド_DADS.pptx` ほか |
+| `scripts/dads_anim.py` | アニメーション（フェード・クリック進行）の書き込みと検査 |
+| `scripts/build_pptx.py` | 「AI駆動開発」15枚 → `out/AI駆動開発/` |
+| `scripts/build_ai_development_guide.py` | 「AI駆動開発ガイド」20枚 → `out/AI駆動開発ガイド/` |
+| `scripts/build_sql_pivot.py` | 「SQLクロス集計」13枚（フェードのアニメーション付き）→ `out/SQLクロス集計/` |
 | `scripts/dads-tokens.css` | 参照したカラートークン実値（`@digital-go-jp/design-tokens` v2.0.1） |
 | `.claude/skills/dads-pptx/` | Claude Code用スキル |
 | `.agents/skills/dads-pptx/` | Codex用スキル（`agents/openai.yaml` 付き） |
 | `docs/dads/` | DADS公式サイトのMarkdown版（139ファイル、AI参照用） |
-| `out/` | 生成物（pptx / pdf / preview png / json）。コミット対象 |
+| `out/<資料名>/` | 生成物。資料ごとにフォルダを分け、pptx / pdf / json と `preview/` を置く。コミット対象 |
 | `work/` | 作業用。gitignore |
 
 ## 環境
@@ -35,7 +37,7 @@ python3 -m venv .venv && .venv/bin/pip install python-pptx pillow
 
 ```bash
 .venv/bin/python scripts/build_pptx.py
-.venv/bin/python scripts/render_check.py out/AI駆動開発_DADS.pptx out/preview
+.venv/bin/python scripts/render_check.py out/AI駆動開発/AI駆動開発_DADS.pptx out/AI駆動開発/preview
 ```
 
 検証は省略しない。手順は3段。
@@ -43,7 +45,7 @@ python3 -m venv .venv && .venv/bin/pip install python-pptx pillow
 1. **生成** … ビルドスクリプトを実行
 2. **数値チェック** … `render_check.py`。`OVERFLOW` が出たら枠の高さか文字数を直し、0件になるまで繰り返す。
    **警告があっても終了コードは0**なので、標準出力の警告件数を必ず読む。
-3. **目視確認** … `out/preview/slideNN.png` を全枚数開く。「下半分が空く」「記号が豆腐になる」
+3. **目視確認** … `out/<資料名>/preview/slideNN.png` を全枚数開く。「下半分が空く」「記号が豆腐になる」
    「角丸が潰れる」は数値チェックでは検出できない。Pillowの近似描画なのでPowerPoint実表示とは差がある。
 
 画像を開けない場合は「目視確認済み」と書かず、保存先と未確認事項を報告する。
@@ -72,9 +74,10 @@ assert contrast(line, bg) >= 3.0 # 罫線・境界
 
 - **`dads_theme.py` は編集しない。** トークン実値とコントラスト検証の根拠が壊れる。
   スタイルを足す必要があれば生成スクリプト側で `STYLE` に追加し、DADSの定義に存在する組み合わせだけにする。
-- `dads_theme.py` / `render_check.py` / `dads-tokens.css` は `scripts/`・`.claude/skills/`・`.agents/skills/`
+- `dads_theme.py` / `render_check.py` / `dads_anim.py` / `dads-tokens.css` は `scripts/`・`.claude/skills/`・`.agents/skills/`
   の**3箇所に同一内容で存在する**（現在バイト一致）。片方だけ直すと乖離するので、変更したら全部に反映する。
-- `design-rules.md` は `.claude` / `.agents` の2箇所に同一内容で存在する。同様に同期する。
+- `design-rules.md` / `animation.md` は `.claude` / `.agents` の2箇所に同一内容で存在する。同様に同期する。
+- アニメーションはフェードのみ・クリック進行。生成後に `scripts/dads_anim.py <pptx>` で検査する（`ERROR` は終了コード1）。
 - 表は `add_table` で作らない。DADSの表は横罫線ベース。`design-rules.md` の `datatable` パターンを使う。
 - 記号は `▸` `✕` `✓` を使わない（Noto Sans JPに字形がない）。矢印は `arrow_right()`、
   バツは `×`（U+00D7）。`▶` `※` `・` `→` は可。

@@ -9,7 +9,7 @@ from pptx.enum.text import MSO_ANCHOR
 from dads_theme import *   # noqa
 
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                   "out", "AI駆動開発_DADS.pptx")
+                   "out", "AI駆動開発", "AI駆動開発_DADS.pptx")
 
 DECK_TITLE = "AI駆動開発"
 CONTENT_W = CANVAS_W - MARGIN_X * 2          # 1152
