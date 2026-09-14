@@ -1,6 +1,6 @@
 ---
 name: dads-pptx
-description: デジタル庁デザインシステム（DADS）に準拠したPowerPoint資料（.pptx）をpython-pptxで生成する。「DADS風のスライド」「デジタル庁デザインの資料」「行政・公共向けの提案書/勉強会資料をPPTXで」といった依頼、およびDADSのトークン（カラー・タイポグラフィ・余白・角の形状）に沿ったスライド作成時に使う。Generate DADS-compliant PPTX decks with verified contrast and layout.
+description: デジタル庁デザインシステム（DADS）に準拠したPowerPoint資料（.pptx）をpython-pptxで生成する。「DADS風のスライド」「デジタル庁デザインの資料」「行政・公共向けの提案書/勉強会資料をPPTXで」といった依頼、およびDADSのトークン（カラー・タイポグラフィ・余白・角の形状）に沿ったスライド作成時に使う。「アニメーション付き」「クリックで順に表示」といったPPTXのアニメーション版の依頼にも使う（フェードのみ・クリック進行）。Generate DADS-compliant PPTX decks with verified contrast and layout, optionally with fade-in click animations.
 ---
 
 # DADS準拠のPPTX作成
@@ -18,6 +18,9 @@ PowerPoint上での表示・アクセシビリティを自動検証だけで保�
 - `references/design-rules.md` … 守るべき設計ルールとレイアウトパターン集
 - `references/dads-tokens.css` … カラートークンの実値（`@digital-go-jp/design-tokens` v2.0.1）
 - `examples/build_example.py` … 4枚の最小構成サンプル（そのまま動く）
+- `scripts/dads_anim.py` … アニメーション（フェード・クリック進行）の書き込みと検査（アニメーション版のみ）
+- `references/animation.md` … アニメーション版のルール・API・構成パターン
+- `examples/build_anim_example.py` … アニメーション付き4枚のサンプル
 
 ## 手順
 
@@ -81,9 +84,11 @@ BLANK = prs.slide_layouts[6]
 
 ### 3. 検証する（省略しない）
 
+出力は資料ごとに `out/<資料名>/` フォルダを作り、本体PPTX・付属ファイル（JSON・PDFなど）・`preview/` をまとめて置く。
+
 ```bash
 .venv/bin/python scripts/build_pptx.py
-.venv/bin/python scripts/render_check.py out/<名前>.pptx out/preview
+.venv/bin/python scripts/render_check.py out/<資料名>/<資料名>.pptx out/<資料名>/preview
 ```
 
 `OVERFLOW` が出たら枠の高さか文字数を直し、再生成・再検証する。
@@ -92,12 +97,48 @@ BLANK = prs.slide_layouts[6]
 
 ### 4. 画像を見て直す
 
-`out/preview/slideNN.png` をCodexの画像表示ツール（`view_image` など）で開き、全スライドを目視確認する。数値チェックでは分からない
+`out/<資料名>/preview/slideNN.png` をCodexの画像表示ツール（`view_image` など）で開き、全スライドを目視確認する。数値チェックでは分からない
 「下半分が空く」「記号が豆腐になる」「角丸が潰れる」といった問題も調べる。
 Pillowによる近似描画なので、PowerPointの実表示とは差があり得る。画像表示ツールが使えなければ、
 目視確認済みとは書かず、プレビューの保存先と未確認事項を伝える。
 
 納品時はPPTX、プレビュー、再生成用スクリプトの保存先と検証結果を簡潔に伝える。
+
+## アニメーション版を作る場合
+
+「アニメーション付きで」「クリックで順に出したい」と依頼されたときだけ行う。先に `references/animation.md` を読む。
+
+1. 同梱の `scripts/dads_anim.py` も作業先の `scripts/` にコピーする（`dads_theme.py` と同じ場所に置く。編集しない）。
+2. 効果は**フェードのみ・クリック進行**。飛び込み・回転・点滅・退場は使わない。
+   全要素を表示した最終状態だけで内容が伝わるように作る（プレビューPNG・印刷は最終状態になる）。
+3. 生成スクリプトで、見せる順に図形を `grab` で集めて `Timeline.click()` に渡し、各スライドの最後に `apply()` する。
+   アニメーションのないスライドも `Timeline(slide).apply()` で画面切り替えを付けて揃える。
+
+```python
+from dads_anim import grab, Timeline, code_block
+
+tl = Timeline(s)
+with grab(s) as g:
+    rect(s, ...); block(s, ...)
+tl.click("カード1を表示", g.shapes)
+tl.apply()
+```
+
+4. 通常の検証に加えてアニメーションを検査する。`ERROR` が出たら直す（終了コード1）。
+
+```bash
+.venv/bin/python scripts/dads_anim.py out/<資料名>/<資料名>.pptx
+```
+
+5. PNGは最終状態しか映らない。出力されたクリック数・発表者ノートのクリック手順と画像を突き合わせて順序を確認する。
+   PowerPointで再生して動きを確認できない場合は「動作は未確認」と報告する。
+
+サンプル：
+
+```bash
+.venv/bin/python .agents/skills/dads-pptx/examples/build_anim_example.py out/anim_example.pptx
+.venv/bin/python .agents/skills/dads-pptx/scripts/dads_anim.py out/anim_example.pptx
+```
 
 ## 必ず守るルール
 
@@ -109,6 +150,7 @@ Pillowによる近似描画なので、PowerPointの実表示とは差があり�
 | 書体 | `Noto Sans JP`（`dads_theme.FONT`）。ラテン・和文（`a:ea`）両方に適用済み |
 | 色だけに依存しない | 意味は必ずラベル・記号・位置でも示す |
 | エレベーション | 既定は高さレベル0。ドロップシャドウで境界を作らない（`shadow.inherit = False` 済み） |
+| アニメーション | 使う場合はフェードのみ・クリック進行。最終状態で内容が完結すること |
 | 出典表記 | 末尾スライドに出典と「デジタル庁が作成したものではない」旨を記載 |
 
 色を追加・変更したら `contrast()` で必ず検算する：

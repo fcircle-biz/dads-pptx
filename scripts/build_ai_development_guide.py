@@ -2,7 +2,7 @@
 """AI駆動開発ガイドを生成する。既存のDADSヘルパを利用する。
 
 実行: .venv/bin/python scripts/build_ai_development_guide.py
-検証: .venv/bin/python scripts/render_check.py out/AI駆動開発ガイド_DADS.pptx out/ai_guide_preview
+検証: .venv/bin/python scripts/render_check.py out/AI駆動開発ガイド/AI駆動開発ガイド_DADS.pptx out/AI駆動開発ガイド/preview
 """
 from pathlib import Path
 import json
@@ -14,8 +14,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from dads_theme import *  # noqa: F403
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "out"
-OUT.mkdir(exist_ok=True)
+OUT = ROOT / "out" / "AI駆動開発ガイド"
+OUT.mkdir(parents=True, exist_ok=True)
 TITLE = "AI駆動開発ガイド"
 DATE = "2026年9月8日"
 W = 1152
